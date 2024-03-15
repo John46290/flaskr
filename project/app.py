@@ -2,6 +2,7 @@ import os
 from functools import wraps
 from pathlib import Path
 
+
 from flask import (
     Flask,
     render_template,
@@ -14,22 +15,30 @@ from flask import (
     jsonify,
 )
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
 
 
 basedir = Path(__file__).resolve().parent
 
-# configuration
-DATABASE = "flaskr.db"
+# # configuration
+# DATABASE = "flaskr.db"
 USERNAME = "admin"
 PASSWORD = "admin"
 SECRET_KEY = "change_me"
-url = os.getenv("DATABASE_URL", f"sqlite:///{Path(basedir).joinpath(DATABASE)}")
+# url = os.getenv("DATABASE_URL", f"sqlite:///{Path(basedir).joinpath(DATABASE)}")
 
-if url.startswith("postgres://"):
-    url = url.replace("postgres://", "postgresql://", 1)
+# if url.startswith("postgres://"):
+#     url = url.replace("postgres://", "postgresql://", 1)
+# SQLALCHEMY_DATABASE_URI = url
+# SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-SQLALCHEMY_DATABASE_URI = url
+# SERVER = "localhost"
+# DATABASE = "flaskr"
+# USERNAME = "flaskr-user"
+# PASSWORD = "asdf"
+SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{os.environ['SQL_USERNAME']}:{os.environ['SQL_PASSWORD']}@{os.environ['SQL_SERVER']}:{os.environ['SQL_PORT']}/{os.environ['SQL_DATABASE']}"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 
 
 # create and initialize a new Flask app
@@ -77,9 +86,9 @@ def login():
     """User login/authentication/session management."""
     error = None
     if request.method == "POST":
-        if request.form["username"] != app.config["USERNAME"]:
+        if request.form["username"] != 'admin':
             error = "Invalid username"
-        elif request.form["password"] != app.config["PASSWORD"]:
+        elif request.form["password"] != 'admin':
             error = "Invalid password"
         else:
             session["logged_in"] = True
